@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pre-train
+  namespace: medtune
+spec:
+  template:
+    spec:
+      containers:
+      - name: mnist2tfrecord
+        image: medtune/k8s-tf:pre-train
+        args: [ "--directory",  "/data/mnist" ] 
+        volumeMounts:
+          - mountPath: /data/mnist
+            name: data-volume
+      restartPolicy: Never
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: data-pvc
+  backoffLimit: 1 # Number of retries

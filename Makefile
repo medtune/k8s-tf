@@ -25,3 +25,21 @@ pull-images:
 
 	docker pull medtune/k8s-tf:pre-train
 	docker push medtune/k8s-tf:train
+
+create-namespace:
+
+create-configmap.yaml:
+
+create-data-volume:
+
+create-artefacts-volume:
+
+inspect-volumes:
+
+convert-data:
+
+train:
+
+train-distributed:
+
+

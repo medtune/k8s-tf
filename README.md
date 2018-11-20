@@ -14,21 +14,34 @@ You can find ready to use images in [docker hub](https://hub.docker.com/r/medtun
 `make build-images`
 `make push-images`
 
-#### Create namespace and persistentVolumeClaim
+#### Create GKE cluster
+`make create-cluster`
 
-`kubectl create -f deploy/namespace.yaml`
-`kubectl create -f deploy/data-pvc.yaml`
+#### Configure kubectl context
+`make kubectl`
 
-#### Create configMap
-`kubectl create -f deploy/config-map.yaml`
+#### Create namespace 
+`kubectl create-namespace`
 
-#### Add secrets 
-`kubectl create -f deploy/secrets.yaml`
+#### Configure default namespace as "medtune"
+`make default-ns`
 
-#### Inspect persistentVolume
-`kubectl create -f deploy/inspect-volume-job.yaml`
+#### Create secrets for gcs 
+`make create-secrets`
 
-#### Run pre training job (mnist to tfrecord)
-`kubectl create -f deploy/pre-train-job.yaml`
+#### Prepare mnist data
+`kubectl create -f job/prepare-mnist`
 
-#### Run distributed training
+#### Run mnist training
+`kubectl create -f deploy/train-mnist`
+
+#### Prepare cod data
+`kubectl create -f job/prepare-cod`
+
+#### Run cod training
+`kubectl create -f deploy/train-cod`
+
+#### Run tensorboard
+`kubectl create -f deploy/tensorboard`
+
+

@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prepare-cod
+  namespace: medtune
+spec:
+  template:
+    spec:
+      containers:
+      - name: prepare-cod-data
+        image: google/cloud-sdk:latest
+        args: [ 
+          "gsutil",
+          "cp",
+          "-r",
+          "gs://medtune/datasets/catvsdog/*",  
+          "/home/data" ]
+          
+        volumeMounts:
+          - mountPath: /home/data
+            name: data-volume
+
+          - mountPath: /home/creds.json
+            name: gcs
+            readOnly: true
+
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/home/creds.json"
+
+      - name: prepare-mobilenet-weights
+        image: google/cloud-sdk:latest
+        args: [ 
+          "gsutil",
+          "cp",
+          "-r",
+          "gs://medtune/ptmodels/ckpt_mobilenet/*",  
+          "/home/weights" ]
+          
+        volumeMounts:
+          - mountPath: /home/weights
+            name: weights-volume
+
+          - mountPath: /home/creds.json
+            name: gcs
+            readOnly: true
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/home/creds.json"
+
+      restartPolicy: Never
+      volumes:
+        - name: data-volume
+          hostPath:
+            path: /home/medtune/data/cod
+            type: Directory
+
+        - name: weights-volume
+          hostPath:
+            path: /home/medtune/weights/cod
+            type: Directory
+            
+        - name: gcs
+          secret:
+            secretName: gcs-creds
+
+  backoffLimit: 1 # Number of retries

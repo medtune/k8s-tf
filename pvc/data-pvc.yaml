@@ -5,7 +5,7 @@ metadata:
   name: data-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadOnlyMany
   resources:
     requests:
-      storage: 20Gi
+      storage: 100Gi

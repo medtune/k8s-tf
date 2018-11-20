@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chief
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: chief
+  template:
+    metadata:
+      name: chief
+      labels:
+        name: chief
+    spec:
+      containers:
+      - name: chief
+        image: medtune/k8s-tf:train-cod-gpu
+        env:
+          - name: TF_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: cod
+                key: node.chief
+        ports:
+          - containerPort: 2222
+        resources:
+          requests:
+            cpu: 3500m
+            memory: 1000Mi
+            nvidia.com/gpu: 1
+          limits:
+            cpu: 5000m
+            memory: 10000Mi
+            nvidia.com/gpu: 1
+        volumeMounts:
+
+          - mountPath: /data
+            name: data-volume
+
+          - mountPath: /artefacts
+            name: artefacts-volume
+
+          - mountPath: /weights
+            name: weights-volume
+
+      volumes:
+        - name: data-volume
+          hostPath:
+            path: /home/medtune/data/cod
+            type: Directory
+        
+        - name: artefacts-volume
+          hostPath:
+            path: /home/medtune/artefacts/cod
+            type: Directory
+
+        - name: weights-volume
+          hostPath:
+            path: /home/medtune/weights/cod
+            type: Directory
+
+      restartPolicy: Always

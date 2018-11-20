@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-1
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: worker-1
+  template:
+    metadata:
+      name: worker-1
+      labels:
+        name: worker-1
+    spec:
+      containers:
+      - name: worker-1
+        image: medtune/k8s-tf:train-cod
+        env:
+          - name: TF_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: cod
+                key: node.worker-1
+        ports:
+          - containerPort: 2222
+        resources:
+          requests:
+            cpu: 1500m
+            memory: 1000Mi
+          limits:
+            cpu: 3000m
+            memory: 10000Mi
+        volumeMounts:
+          - mountPath: /artefacts
+            name: artefacts-volume
+
+          - mountPath: /data
+            name: data-volume
+
+          - mountPath: /weights
+            name: weights-volume
+
+
+      volumes:
+        - name: artefacts-volume
+          hostPath:
+            path: /home/medtune/artefacts/cod
+            type: Directory
+
+        - name: data-volume
+          hostPath:
+            path: /home/medtune/data/cod
+            type: Directory
+
+        - name: weights-volume
+          hostPath:
+            path: /home/medtune/weights/cod
+            type: Directory
+
+      restartPolicy: Always

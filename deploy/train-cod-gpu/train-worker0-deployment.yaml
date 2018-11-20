@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-0
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: worker-0
+  template:
+    metadata:
+      name: worker-0
+      labels:
+        name: worker-0
+    spec:
+      containers:
+      - name: worker-0
+        image: medtune/k8s-tf:train-cod-gpu
+        env:
+          - name: TF_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: cod
+                key: node.worker-0
+        ports:
+          - containerPort: 2222
+        resources:
+          requests:
+            cpu: 1500m
+            memory: 1000Mi
+            nvidia.com/gpu: 1
+          limits:
+            cpu: 3000m
+            memory: 10000Mi
+            nvidia.com/gpu: 1
+            
+        volumeMounts:
+          - mountPath: /artefacts
+            name: artefacts-volume
+
+          - mountPath: /data
+            name: data-volume
+
+          - mountPath: /weights
+            name: weights-volume
+
+      volumes:
+        - name: artefacts-volume
+          hostPath:
+            path: /home/medtune/artefacts/cod
+            type: Directory
+
+        - name: data-volume
+          hostPath:
+            path: /home/medtune/data/cod
+            type: Directory
+
+        - name: weights-volume
+          hostPath:
+            path: /home/medtune/weights/cod
+            type: Directory      
+
+      restartPolicy: Always

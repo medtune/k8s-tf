@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-1
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: worker-1
+  template:
+    metadata:
+      name: worker-1
+      labels:
+        name: worker-1
+    spec:
+      containers:
+      - name: worker-1
+        image: medtune/k8s-tf:train
+        args: [ 
+          "--train_file",  "/data/mnist/train.tfrecords",
+          "--test_file", "/data/mnist/test.tfrecords",
+          "--out_dir", "/artefacts",
+        ]
+        env:
+          - name: TF_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: dtf-nodes-configs
+                key: node.worker-1
+        ports:
+          - containerPort: 2222
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 1000Mi
+          limits:
+            cpu: 1500m
+            memory: 2500Mi
+        volumeMounts:
+          - mountPath: /artefacts
+            name: artefacts-volume
+          - mountPath: /data/mnist
+            name: data-volume
+
+      volumes:
+        - name: artefacts-volume
+          hostPath:
+            path: /home/medtune/artefacts
+            type: Directory
+
+        - name: data-volume
+          hostPath:
+            path: /home/medtune/data
+            type: Directory
+
+      restartPolicy: Always

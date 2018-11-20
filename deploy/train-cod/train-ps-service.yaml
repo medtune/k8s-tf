@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: medtune
+  name: ps-0
+spec:
+  ports:
+  - name: "2222"
+    port: 2222
+    targetPort: 2222
+  selector:
+    name: ps-0
+  type: ClusterIP

@@ -1,7 +1,17 @@
 # k8s-tf
-Messing with distributed TensorFlow and Kubernetes cluster
+Messing with distributed TensorFlow and Kubernetes cluster.
 
 ---
+
+## TODO
+- use nfs as volume
+- use persistentVolumes & persistentVolumeClaim for partitioning
+- distributed training: mura
+- distributed training: chestxray
+
+###### Toughts
+While writing training yaml files we understood why really [kubeflow]() exists... Configuring workers environnements and dns services can be automatically generated ! We'll continue messing with all this stuff in order to determine weither we should use kubeflow when its stable (version >= 1) or create our own generation tool.
+
 
 ###### Requirements:
 
@@ -38,8 +48,11 @@ You can find ready to use images in [docker hub](https://hub.docker.com/r/medtun
 #### Prepare cod data
 `kubectl create -f job/prepare-cod`
 
-#### Run cod training
+#### Run cod training - CPU Only
 `kubectl create -f deploy/train-cod`
+
+#### Run cod training - GPU
+`kubectl create -f deploy/train-cod-gpu`
 
 #### Run tensorboard
 `kubectl create -f deploy/tensorboard`

@@ -27,11 +27,11 @@ spec:
           - containerPort: 2222
         resources:
           requests:
-            cpu: 1500m
+            cpu: 3500m
             memory: 1000Mi
             nvidia.com/gpu: 1
           limits:
-            cpu: 3000m
+            cpu: 5000m
             memory: 10000Mi
             nvidia.com/gpu: 1
             

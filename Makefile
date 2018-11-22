@@ -1,5 +1,4 @@
 build-prepare-mnist:
-	# Build mnist to tfrecord job image
 	docker build \
 		-t medtune/k8s-tf:prepare-mnist \
 		-f build/images/prepare-mnist/Dockerfile \
@@ -13,7 +12,6 @@ build-prepare-cod:
 
 
 build-train-mnist:
-	# Build training job image
 	docker build \
 		-t medtune/k8s-tf:train-mnist \
 		-f build/images/train-mnist/Dockerfile \
@@ -91,5 +89,14 @@ create-cluster:
       --disk-size 100 \
       --machine-type n1-standard-8
 
+create-gpu-cluster:
+	gcloud container clusters create test-vcluster \
+      --zone europe-west1-b \
+      --num-nodes 1 \
+      --cluster-version 1.11 \
+      --disk-size 100 \
+      --machine-type n1-standard-8
+
 delete-cluster:
 	gcloud container clusters delete test-vcluster
+

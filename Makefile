@@ -19,9 +19,9 @@ build-train-mnist:
 
 build-train-cod:
 	docker build \
-		-t medtune/k8s-tf:train-cod \
+		-t medtune/k8s-tf:train-cod-cpu \
 		-f build/images/train-cod/Dockerfile \
-		build/images/train-cod-cpu
+		build/images/train-cod
 
 build-train-cod-cpu: build-train-cod
 
@@ -29,7 +29,7 @@ build-train-cod-gpu:
 	docker build \
 		-t medtune/k8s-tf:train-cod-gpu \
 		-f build/images/train-cod/Dockerfile.gpu \
-		build/images/train-cod-gpu
+		build/images/train-cod
 
 build-images: build-train-cod \
 	build-train-mnist \

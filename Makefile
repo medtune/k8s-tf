@@ -70,6 +70,8 @@ train-mnist:
 train-cod:
 	kubectl create -f k8s/deployments/train-cod
 
+train-cod-cpu: train-cod
+
 train-cod-gpu:
 	kubectl create -f k8s/deployments/train-cod-gpu
 

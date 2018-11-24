@@ -17,27 +17,26 @@ spec:
       containers:
       - name: tensorboard
         command: [ "/bin/sh", "-c" ]
-        args: [ "tensorboard --logdir /artefacts" ]
+        args: [ "tensorboard --logdir /nfs/artefacts/cod" ]
         image: tensorflow/tensorflow
         ports:
         - containerPort: 6006
 
         resources:
           requests:
-            cpu: 1000m
+            cpu: 200m
             memory: 1000Mi
           limits:
-            cpu: 1500m
+            cpu: 500m
             memory: 2500Mi
 
         volumeMounts:
-          - mountPath: /artefacts
-            name: artefacts-volume
+          - mountPath: /nfs
+            name: nfs-volume
 
-      volumes:        
-        - name: artefacts-volume
-          hostPath:
-            path: /home/medtune/artefacts/cod
-            type: Directory
+      volumes:
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
 
       restartPolicy: Always

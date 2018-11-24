@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: chief
+  name: ps-0
   namespace: medtune
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: chief
+      name: ps-0
   template:
     metadata:
-      name: chief
+      name: ps-0
       labels:
-        name: chief
+        name: ps-0
     spec:
       containers:
-      - name: chief
+      - name: ps-0
         image: medtune/k8s-tf:train
         args: [ 
-          "--train_file",  "/data/mnist/train.tfrecords",
-          "--test_file", "/data/mnist/test.tfrecords",
-          "--out_dir", "/artefacts",
+          "--train_file",  "/nfs/data/mnist/train.tfrecords",
+          "--test_file", "/nfs/data/mnist/test.tfrecords",
+          "--out_dir", "/nfs/artefacts/mnist",
         ]
         env:
           - name: TF_CONFIG
             valueFrom:
               configMapKeyRef:
                 name: dtf-nodes-configs
-                key: node.chief
+                key: node.ps
         ports:
           - containerPort: 2222
         resources:
@@ -37,21 +37,15 @@ spec:
           limits:
             cpu: 1500m
             memory: 2500Mi
+
         volumeMounts:
-          - mountPath: /data/mnist
-            name: data-volume
-          - mountPath: /artefacts
-            name: artefacts-volume
+          - mountPath: /nfs
+            name: nfs-volume
 
       volumes:
-        - name: data-volume
-          hostPath:
-            path: /home/medtune/data
-            type: Directory
-        
-        - name: artefacts-volume
-          hostPath:
-            path: /home/medtune/artefacts
-            type: Directory
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
+
 
       restartPolicy: Always

@@ -102,7 +102,7 @@ def model_fn(features, mode):
                             {v.name.split(':')[0]: v for v in variables_to_restore})
 
     predicted_classes = tf.argmax(logits, axis=1)
-    labels = tf.cast(features["image/class/id"], tf.int32) 
+    labels = tf.cast(features["image/class/label"], tf.int32) 
     
         #Defining losses and regulization ops:
     with tf.name_scope("loss_op"):

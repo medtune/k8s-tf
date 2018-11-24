@@ -14,11 +14,11 @@ spec:
           "cp",
           "-r",
           "gs://medtune/datasets/catvsdog/*",  
-          "/home/data" ]
+          "/nfs/data/cod" ]
           
         volumeMounts:
-          - mountPath: /home/data
-            name: data-volume
+          - mountPath: /nfs
+            name: nfs-volume
 
           - mountPath: /home/creds.json
             name: gcs
@@ -35,30 +35,21 @@ spec:
           "cp",
           "-r",
           "gs://medtune/ptmodels/ckpt_mobilenet/*",  
-          "/home/weights" ]
-          
+          "/nfs/weights/mobilenet",
+        ]  
         volumeMounts:
-          - mountPath: /home/weights
-            name: weights-volume
+          - mountPath: /nfs
+            name: nfs-volume
 
-          - mountPath: /home/creds.json
-            name: gcs
-            readOnly: true
         env:
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: "/home/creds.json"
 
       restartPolicy: Never
       volumes:
-        - name: data-volume
-          hostPath:
-            path: /home/medtune/data/cod
-            type: Directory
-
-        - name: weights-volume
-          hostPath:
-            path: /home/medtune/weights/cod
-            type: Directory
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
             
         - name: gcs
           secret:

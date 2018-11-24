@@ -16,7 +16,12 @@ spec:
     spec:
       containers:
       - name: worker-0
-        image: medtune/k8s-tf:train-cod
+        image: medtune/k8s-tf:train-cod-cpu
+        args: [
+          "--dataset_dir", "/nfs/data/cod",
+          "--train_dir", "/nfs/artefacts/cod",
+          "--ckpt", "/nfs/weights/mobilenet",
+        ]
         env:
           - name: TF_CONFIG
             valueFrom:
@@ -30,32 +35,16 @@ spec:
             cpu: 1500m
             memory: 1000Mi
           limits:
-            cpu: 3000m
+            cpu: 2000m
             memory: 10000Mi
+
         volumeMounts:
-          - mountPath: /artefacts
-            name: artefacts-volume
-
-          - mountPath: /data
-            name: data-volume
-
-          - mountPath: /weights
-            name: weights-volume
+          - mountPath: /nfs
+            name: nfs-volume
 
       volumes:
-        - name: artefacts-volume
-          hostPath:
-            path: /home/medtune/artefacts/cod
-            type: Directory
-
-        - name: data-volume
-          hostPath:
-            path: /home/medtune/data/cod
-            type: Directory
-
-        - name: weights-volume
-          hostPath:
-            path: /home/medtune/weights/cod
-            type: Directory      
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
 
       restartPolicy: Always

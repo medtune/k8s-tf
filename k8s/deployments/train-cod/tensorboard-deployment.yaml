@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tensorboard
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: tensorboard
+  template:
+    metadata:
+      name: tensorboard
+      labels:
+        name: tensorboard
+    spec:
+      containers:
+      - name: tensorboard
+        command: [ "/bin/sh", "-c" ]
+        args: [ "tensorboard --logdir /nfs/artefacts/cod" ]
+        image: tensorflow/tensorflow
+        ports:
+        - containerPort: 6006
+
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1000Mi
+          limits:
+            cpu: 500m
+            memory: 2500Mi
+
+        volumeMounts:
+          - mountPath: /nfs
+            name: nfs-volume
+
+      volumes:
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
+
+      restartPolicy: Always

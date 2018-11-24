@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-0
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: worker-0
+  template:
+    metadata:
+      name: worker-0
+      labels:
+        name: worker-0
+    spec:
+      containers:
+      - name: worker-0
+        image: medtune/k8s-tf:train-cod-cpu
+        args: [
+          "--dataset_dir", "/nfs/data/cod",
+          "--train_dir", "/nfs/artefacts/cod",
+          "--ckpt", "/nfs/weights/mobilenet",
+        ]
+        env:
+          - name: TF_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: cod
+                key: node.worker-0
+        ports:
+          - containerPort: 2222
+        resources:
+          requests:
+            cpu: 1500m
+            memory: 1000Mi
+          limits:
+            cpu: 2000m
+            memory: 10000Mi
+
+        volumeMounts:
+          - mountPath: /nfs
+            name: nfs-volume
+
+      volumes:
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
+
+      restartPolicy: Always

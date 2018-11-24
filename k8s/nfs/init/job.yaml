@@ -9,11 +9,18 @@ spec:
       containers:
       - name: ls-laxd
         image: alpine
-        command: [ "ls", "-la",
-          "/",
-          "/nfs" ]
+        command: [ "mkdir", "-p",
+          "/x/weights",
+          "/x/artefacts/cod",
+          "/x/artefacts/mnist",
+          "/x/artefacts/mura",
+          "/x/artefacts/chest",          
+          "/x/data/cod",
+          "/x/data/mnist",
+          "/x/data/mura",
+          "/x/data/chest" ]
         volumeMounts:
-          - mountPath: /nfs
+          - mountPath: /x
             name: nfs-volume
 
       restartPolicy: Never

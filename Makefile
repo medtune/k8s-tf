@@ -69,7 +69,9 @@ train-cod-gpu:
 	kubectl create -f deploy/train-cod-gpu
 
 default-ns:
-	bash scripts/default-ns.sh medtune
+	kubectl config \
+		set-context $(kubectl config current-context) \
+		--namespace="$1"
 
 create-secrets:
 	kubectl create secret generic gcs-creds \

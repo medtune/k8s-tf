@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tensorboard
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: tensorboard
+  template:
+    metadata:
+      name: tensorboard
+      labels:
+        name: tensorboard
+    spec:
+      containers:
+      - name: tensorboard
+        command: [ "/bin/sh", "-c" ]
+        args: [ "tensorboard --logdir /artefacts" ]
+        image: tensorflow/tensorflow
+        ports:
+        - containerPort: 6006
+
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 1000Mi
+          limits:
+            cpu: 1500m
+            memory: 2500Mi
+
+        volumeMounts:
+          - mountPath: /artefacts
+            name: artefacts-volume
+
+      volumes:        
+        - name: artefacts-volume
+          hostPath:
+            path: /home/medtune/artefacts/cod
+            type: Directory
+
+      restartPolicy: Always

@@ -1,42 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: chief
+  name: worker-0
   namespace: medtune
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: chief
+      name: worker-0
   template:
     metadata:
-      name: chief
+      name: worker-0
       labels:
-        name: chief
+        name: worker-0
     spec:
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-tesla-k80
       containers:
-      - name: chief
-        image: medtune/k8s-tf:train-cod-cpu
+      - name: worker-0
+        image: medtune/k8s-tf:train-mura-gpu
         args: [
-          "--dataset_dir", "/nfs/data/cod",
-          "--train_dir", "/nfs/artefacts/cod",
+          "--dataset_dir", "/nfs/data/mura",
+          "--train_dir", "/nfs/artefacts/mura",
           "--ckpt", "/nfs/weights/mobilenet",
         ]
         env:
           - name: TF_CONFIG
             valueFrom:
               configMapKeyRef:
-                name: cod
-                key: node.chief
+                name: mura
+                key: node.worker-0
         ports:
           - containerPort: 2222
         resources:
           requests:
-            cpu: 2500m
-            memory: 3000Mi
-          limits:
             cpu: 3000m
+            memory: 3000Mi
+            nvidia.com/gpu: 1
+          limits:
+            cpu: 5000m
             memory: 10000Mi
+            nvidia.com/gpu: 1
+
         volumeMounts:
           - mountPath: /nfs
             name: nfs-volume

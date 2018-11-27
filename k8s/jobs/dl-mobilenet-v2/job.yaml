@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: get-mobilenet-v2
+  namespace: medtune
+spec:
+  template:
+    spec:
+      containers:
+      - name: prepare-mobilenet-weights
+        image: google/cloud-sdk:latest
+        args: [ 
+          "gsutil",
+          "cp",
+          "-r",
+          "gs://medtune/ptmodels/ckpt_mobilenet/*",  
+          "/nfs/weights/mobilenet",
+        ]  
+        volumeMounts:
+          - mountPath: /nfs
+            name: nfs-volume
+
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/home/creds.json"
+
+      volumes:
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
+            
+        - name: gcs
+          secret:
+            secretName: gcs-creds
+
+      restartPolicy: Never
+  backoffLimit: 1 # Number of retries

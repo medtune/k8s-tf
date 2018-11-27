@@ -1,42 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ps-0
+  name: evaluator
   namespace: medtune
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: ps-0
+      name: evaluator
   template:
     metadata:
-      name: ps-0
+      name: evaluator
       labels:
-        name: ps-0
+        name: evaluator
     spec:
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-tesla-p100
       containers:
-      - name: ps-0
-        image: medtune/k8s-tf:train-cod-cpu
+      - name: evaluator
+        image: medtune/k8s-tf:train-mura-gpu
         args: [
-          "--dataset_dir", "/nfs/data/cod",
-          "--train_dir", "/nfs/artefacts/cod",
+          "--dataset_dir", "/nfs/data/mura",
+          "--train_dir", "/nfs/artefacts/mura",
           "--ckpt", "/nfs/weights/mobilenet",
         ]
         env:
           - name: TF_CONFIG
             valueFrom:
               configMapKeyRef:
-                name: cod
-                key: node.ps
+                name: mura
+                key: node.evaluator
         ports:
           - containerPort: 2222
         resources:
           requests:
-            cpu: 1000m
-            memory: 1000Mi
+            cpu: 3000m
+            memory: 3000Mi
+            nvidia.com/gpu: 1
           limits:
-            cpu: 1500m
+            cpu: 5000m
             memory: 10000Mi
+            nvidia.com/gpu: 1
 
         volumeMounts:
           - mountPath: /nfs
@@ -46,6 +50,5 @@ spec:
         - name: nfs-volume
           persistentVolumeClaim:
             claimName: train-pvc
-
 
       restartPolicy: Always

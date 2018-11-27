@@ -14,36 +14,43 @@ spec:
       labels:
         name: chief
     spec:
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-tesla-k80
       containers:
       - name: chief
-        image: medtune/k8s-tf:train-cod-cpu
-        args: [
-          "--dataset_dir", "/nfs/data/cod",
-          "--train_dir", "/nfs/artefacts/cod",
-          "--ckpt", "/nfs/weights/mobilenet",
-        ]
+        image: medtune/k8s-tf:train-mura-gpu-v2
+        args: ["/etc/train/config.yaml", "/etc/train/config.yaml"]
         env:
           - name: TF_CONFIG
             valueFrom:
               configMapKeyRef:
-                name: cod
+                name: mura
                 key: node.chief
         ports:
           - containerPort: 2222
         resources:
           requests:
-            cpu: 2500m
-            memory: 3000Mi
-          limits:
             cpu: 3000m
             memory: 10000Mi
+            nvidia.com/gpu: 1
+          limits:
+            cpu: 5000m
+            memory: 15000Mi
+            nvidia.com/gpu: 1
         volumeMounts:
           - mountPath: /nfs
             name: nfs-volume
+
+          - mountPath: /etc/train
+            name: train-config
 
       volumes:
         - name: nfs-volume
           persistentVolumeClaim:
             claimName: train-pvc
+
+        - name: train-config
+          configMap:
+            name: mura-config
 
       restartPolicy: Always

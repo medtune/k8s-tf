@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prepare-mura
+  namespace: medtune
+spec:
+  template:
+    spec:
+      containers:
+      - name: prepare-mura-data
+        image: google/cloud-sdk:latest
+        args: [ 
+          "gsutil",
+          "-m",
+          "cp",
+          "-r",
+          "gs://medtune/datasets/mura/*",  
+          "/nfs/data/mura" ]
+          
+        volumeMounts:
+          - mountPath: /nfs
+            name: nfs-volume
+
+          - mountPath: /home/creds.json
+            name: gcs
+            readOnly: true
+
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/home/creds.json"
+
+      restartPolicy: Never
+      volumes:
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
+            
+        - name: gcs
+          secret:
+            secretName: gcs-creds
+
+  backoffLimit: 1 # Number of retries

@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mura
+  namespace: medtune
+data:
+  node.ps-0: |
+    {
+      "cluster": {
+        "chief": ["chief.medtune.svc.cluster.local:2222"],
+        "ps": ["ps-0.medtune.svc.cluster.local:2222"],
+        "worker": ["worker-0.medtune.svc.cluster.local:2222",
+                   "worker-1.medtune.svc.cluster.local:2222"]
+      },
+      "task": {
+        "index": 0,
+        "type": "ps"
+      }
+    }
+  
+  node.worker-0: |
+    {
+      "cluster": {
+        "chief": ["chief.medtune.svc.cluster.local:2222"],
+        "ps": ["ps-0.medtune.svc.cluster.local:2222"],
+        "worker": ["worker-0.medtune.svc.cluster.local:2222",
+                   "worker-1.medtune.svc.cluster.local:2222"]
+      },
+      "task": {
+        "index": 0,
+        "type": "worker"
+      }
+    }
+
+  node.worker-1: |
+    {
+      "cluster": {
+        "chief": ["chief.medtune.svc.cluster.local:2222"],
+        "ps": ["ps-0.medtune.svc.cluster.local:2222"],
+        "worker": ["worker-0.medtune.svc.cluster.local:2222",
+                   "worker-1.medtune.svc.cluster.local:2222"]
+      },
+      "task": {
+        "index": 1,
+        "type": "worker"
+      }
+    }
+
+  node.chief: |
+    {
+      "cluster": {
+        "chief": ["chief.medtune.svc.cluster.local:2222"],
+        "ps": ["ps-0.medtune.svc.cluster.local:2222"],
+        "worker": ["worker-0.medtune.svc.cluster.local:2222",
+                   "worker-1.medtune.svc.cluster.local:2222"]
+      },
+      "task": {
+        "index": 0,
+        "type": "chief"
+      }
+    }
+
+  node.evaluator: |
+    {
+      "cluster": {
+        "chief": ["chief.medtune.svc.cluster.local:2222"],
+        "ps": ["ps-0.medtune.svc.cluster.local:2222"],
+        "worker": ["worker-0.medtune.svc.cluster.local:2222",
+                   "worker-1.medtune.svc.cluster.local:2222"]
+      },
+      "task": {
+        "index": 0,
+        "type": "evaluator"
+      }
+    }

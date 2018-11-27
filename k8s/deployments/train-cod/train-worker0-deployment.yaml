@@ -32,10 +32,10 @@ spec:
           - containerPort: 2222
         resources:
           requests:
-            cpu: 1500m
-            memory: 1000Mi
+            cpu: 2500m
+            memory: 3000Mi
           limits:
-            cpu: 2000m
+            cpu: 3000m
             memory: 10000Mi
 
         volumeMounts:

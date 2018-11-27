@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caddy
+  namespace: medtune
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: caddy
+  template:
+    metadata:
+      name: caddy
+      labels:
+        name: caddy
+    spec:
+      containers:
+      - name: caddy
+        image: ahilaly/amine.in:caddyserver
+        args: [ 
+          "-conf",
+          "/etc/cc/Caddyfile",
+          "-email",
+          "medtune.europe@gmail.com",
+          "-root",
+          "/nfs/caddy",
+          "-agree",
+        ]
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources:
+          requests:
+            cpu: 100m
+            memory: 1000Mi
+          limits:
+            cpu: 1000m
+            memory: 2500Mi
+
+        volumeMounts:
+          - mountPath: /nfs
+            name: nfs-volume
+
+          - mountPath: /etc/cc
+            name: caddy-config
+
+          - mountPath: /home/.aws
+            name: aws-creds
+
+      volumes:        
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: train-pvc
+
+        - name: caddy-config
+          configMap:
+            name: caddy
+
+        - name: aws-creds
+          secret:
+            secretName: aws-creds
+
+      restartPolicy: Always

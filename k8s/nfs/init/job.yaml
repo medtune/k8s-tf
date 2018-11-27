@@ -1,16 +1,16 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: inspect-volume
+  name: init-volume
   namespace: medtune
 spec:
   template:
     spec:
       containers:
-      - name: ls-laxd
-        image: alpine
+      - name: create-dirs
+        image: busybox
         command: [ "mkdir", "-p",
-          "/x/weights",
+          "/x/weights/mobilenet",
           "/x/artefacts/cod",
           "/x/artefacts/mnist",
           "/x/artefacts/mura",

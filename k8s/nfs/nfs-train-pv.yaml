@@ -5,9 +5,10 @@ metadata:
   namespace: medtune
 spec:
   capacity:
-    storage: 100G
+    storage: 1T
   accessModes:
   - ReadWriteMany
   nfs:
     path: /medtune_nfs/tfk8s
-    server: 10.3.27.186
+    server: 10.51.30.130
+

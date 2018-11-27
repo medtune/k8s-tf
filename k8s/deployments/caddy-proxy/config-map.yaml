@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: caddy
+  namespace: medtune
+data:
+  Caddyfile: |
+    http://alpha-cluster.k8s.dev.medtune.eu, alpha-cluster.k8s.dev.medtune.eu {
+        #proxy / https://medtune.eu:443
+        redir https://alpha-cluster.k8s.dev.medtune.eu{uri}
+    }
+
+    https://alpha-cluster.k8s.dev.medtune.eu {
+        tls {
+            dns route53
+        }
+
+        proxy / tensorboard.medtune.svc.cluster.local {
+            transparent
+        }
+    }
+
+        

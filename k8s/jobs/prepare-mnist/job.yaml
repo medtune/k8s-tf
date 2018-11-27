@@ -9,7 +9,8 @@ spec:
       containers:
       - name: mnist2tfrecord
         image: medtune/k8s-tf:pre-train
-        args: [ "--directory",  "/nfs/data/mnist" ] 
+        args: [ "--directory",  "/nfs/data/mnist" ]
+        
         volumeMounts:
           - mountPath: /nfs
             name: nfs-volume

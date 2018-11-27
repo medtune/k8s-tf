@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cod
+  name: mura
   namespace: medtune
 data:
-  node.ps: |
+  node.ps-0: |
     {
       "cluster": {
         "chief": ["chief.medtune.svc.cluster.local:2222"],
@@ -17,7 +17,7 @@ data:
         "type": "ps"
       }
     }
-
+  
   node.worker-0: |
     {
       "cluster": {
@@ -57,5 +57,19 @@ data:
       "task": {
         "index": 0,
         "type": "chief"
+      }
+    }
+
+  node.evaluator: |
+    {
+      "cluster": {
+        "chief": ["chief.medtune.svc.cluster.local:2222"],
+        "ps": ["ps-0.medtune.svc.cluster.local:2222"],
+        "worker": ["worker-0.medtune.svc.cluster.local:2222",
+                   "worker-1.medtune.svc.cluster.local:2222"]
+      },
+      "task": {
+        "index": 0,
+        "type": "evaluator"
       }
     }

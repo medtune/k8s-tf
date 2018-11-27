@@ -31,6 +31,25 @@ build-train-cod-gpu:
 		-f build/images/train-cod/Dockerfile.gpu \
 		build/images/train-cod
 
+
+build-train-mura-cpu:
+	docker build --no-cache \
+		-t medtune/k8s-tf:train-mura-cpu \
+		-f build/images/train-mura/Dockerfile \
+		build/images/train-mura
+		
+build-train-mura-gpu:
+	docker build --no-cache \
+		-t medtune/k8s-tf:train-mura-gpu \
+		-f build/images/train-mura/Dockerfile.gpu \
+		build/images/train-mura
+
+build-train-mura-gpu-v2:
+	docker build --no-cache \
+		-t medtune/k8s-tf:train-mura-gpu-v2 \
+		-f build/images/train-mura/v2/Dockerfile.gpu \
+		build/images/train-mura/v2
+
 build-images: build-train-cod \
 	build-train-mnist \
 	build-prepare-cod \
@@ -56,13 +75,17 @@ pull-images:
 	docker push medtune/k8s-tf:train-cod-gpu
 
 create-namespace:
-	kubectl create -f meta/namespace.yaml
+	kubectl create -f k8s/namespace.yaml
 
 prepare-mnist:
 	kubectl create -f k8s/jobs/prepare-mnist
 
 prepare-cod:
 	kubectl create -f k8s/jobs/prepare-cod
+
+prepare-mura:
+	kubectl create -f k8s/jobs/prepare-mura
+	kubectl create -f k8s/jobs/dl-mobilenet-v2
 
 train-mnist:
 	kubectl create -f k8s/deployments/train-mnist
@@ -75,6 +98,16 @@ train-cod-cpu: train-cod
 train-cod-gpu:
 	kubectl create -f k8s/deployments/train-cod-gpu
 
+train-mura-gpu:
+	kubectl create -f k8s/deployments/train-mura-gpu
+
+train-mura-gpu-v2:
+	kubectl create -f k8s/deployments/train-mura-gpu-v2
+
+force-stop:
+	kubectl delete deployment --all
+	kubectl delete service --all
+
 default-ns:
 	kubectl config \
 		set-context $(shell kubectl config current-context) \
@@ -84,6 +117,10 @@ create-secrets:
 	kubectl create secret generic gcs-creds \
 		-n medtune \
 		--from-file=./secrets/mdtn.json
+
+	kubectl create secret generic aws-creds \
+		-n medtune \
+		--from-file=./secrets/credentials
 
 kubectl:
 	gcloud container clusters get-credentials test-vcluster \
@@ -105,6 +142,24 @@ create-gpu-cluster:
       --cluster-version 1.11 \
       --disk-size 100 \
       --machine-type n1-standard-8
+
+nvidia-ds:
+	kubectl \
+		apply \
+		-f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/stable/nvidia-driver-installer/cos/daemonset-preloaded.yaml
+
+
+nfs-pv:
+	kubectl create -f \
+		k8s/nfs/
+
+init-pv:
+	kubectl create -f \
+		k8s/nfs/init/
+
+dl-mobilenet:
+	kubectl create -f \
+		k8s/jobs/dl-mobilenet-v2
 
 delete-cluster:
 	gcloud container clusters delete test-vcluster

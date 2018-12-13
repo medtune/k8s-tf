@@ -50,30 +50,6 @@ build-train-mura-gpu-v2:
 		-f build/images/train-mura/v2/Dockerfile.gpu \
 		build/images/train-mura/v2
 
-build-images: build-train-cod \
-	build-train-mnist \
-	build-prepare-cod \
-	build-prepare-mnist \
-	build-train-cod-gpu
-
-
-push-images:
-	# Push to docker hub
-    # hub.docker.com/r/medtune/k8s-tf
-	docker push medtune/k8s-tf:train-mnist
-	docker push medtune/k8s-tf:prepare-mnist
-	docker push medtune/k8s-tf:prepare-cod
-	docker push medtune/k8s-tf:train-cod-cpu
-	docker push medtune/k8s-tf:train-cod-gpu
-
-pull-images:
-	# Pull images from docker hub
-	docker pull medtune/k8s-tf:prepare-mnist
-	docker push medtune/k8s-tf:train-mnist
-	docker pull medtune/k8s-tf:prepare-cod
-	docker push medtune/k8s-tf:train-cod-cpu
-	docker push medtune/k8s-tf:train-cod-gpu
-
 create-namespace:
 	kubectl create -f k8s/namespace.yaml
 
@@ -164,3 +140,31 @@ dl-mobilenet:
 delete-cluster:
 	gcloud container clusters delete test-vcluster
 
+build-images: build-prepare-mnist \
+	build-train-mnist \
+	build-train-cod-cpu \
+	build-train-cod-gpu \
+	build-train-mura-gpu-v2
+
+push-images:
+	# Push to docker hub
+    # hub.docker.com/r/medtune/k8s-tf
+	docker push medtune/k8s-tf:train-mnist
+	docker push medtune/k8s-tf:prepare-mnist
+	#docker push medtune/k8s-tf:prepare-cod
+	#docker push medtune/k8s-tf:train-cod-cpu
+	docker push medtune/k8s-tf:train-cod-gpu
+	#docker push medtune/k8s-tf:train-mura-cpu
+	#docker push medtune/k8s-tf:train-mura-gpu
+	docker push medtune/k8s-tf:train-mura-gpu-v2
+
+pull-images:
+	# Pull images from docker hub
+	docker pull medtune/k8s-tf:prepare-mnist
+	docker pull medtune/k8s-tf:train-mnist
+	#docker pull medtune/k8s-tf:prepare-cod
+	docker pull medtune/k8s-tf:train-cod-cpu
+	docker pull medtune/k8s-tf:train-cod-gpu
+	#docker pull medtune/k8s-tf:train-mura-cpu
+	docker pull medtune/k8s-tf:train-mura-gpu
+	docker pull medtune/k8s-tf:train-mura-gpu-v2

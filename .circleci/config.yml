@@ -1,0 +1,22 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: build images
+          command: make build-all
+
+
+      - run:
+          name: push image to registry
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            make push-image
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build

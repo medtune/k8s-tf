@@ -6,10 +6,16 @@ RUN pip3 install pyyaml
 
 WORKDIR /code
 
-RUN git clone -b stats_distribute https://github.com/medtune/Models-implementation .
+RUN git clone \
+    --depth=1 \
+    -b stats_distribute \
+    https://github.com/medtune/Models-implementation .
 
 # Setup research & slim
-RUN git clone -b master https://github.com/tensorflow/models
+RUN git clone \
+    --depth=1 \
+    -b master \
+    https://github.com/tensorflow/models
 
 RUN mv models/research .
 

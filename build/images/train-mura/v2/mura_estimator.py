@@ -108,10 +108,10 @@ def model_fn(features, mode):
     #FIXME: Replace classifier function (sigmoid / softmax)
     if mode != tf.estimator.ModeKeys.PREDICT:
         metrics = {
-        'Accuracy': tf.metrics.accuracy(labels, predicted_classes, name="acc_op"),
-        'Precision': tf.metrics.precision(labels, predicted_classes, name="precision_op"),
-        'Recall': tf.metrics.recall(labels, predicted_classes, name="recall_op"),
-        'Acc_Class': tf.metrics.mean_per_class_accuracy(labels, predicted_classes,len(labels_to_names), name="per_class_acc")
+            'Accuracy': tf.metrics.accuracy(labels, predicted_classes, name="acc_op"),
+            'Precision': tf.metrics.precision(labels, predicted_classes, name="precision_op"),
+            'Recall': tf.metrics.recall(labels, predicted_classes, name="recall_op"),
+            'Acc_Class': tf.metrics.mean_per_class_accuracy(labels, predicted_classes,len(labels_to_names), name="per_class_acc")
         }
         for name, value in metrics.items():
             items_list = value[1].get_shape().as_list()

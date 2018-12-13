@@ -1,10 +1,11 @@
 # k8s-tf
 Messing with distributed TensorFlow and Kubernetes cluster.
 
+[![CircleCI](https://circleci.com/gh/medtune/k8s-tf/tree/master.svg?style=svg)](https://circleci.com/gh/medtune/k8s-tf/tree/master)
+
 ---
 
 ## TODO
-- distributed training: mura
 - distributed training: chestxray
 
 ###### Toughts

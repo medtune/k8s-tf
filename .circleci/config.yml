@@ -6,7 +6,7 @@ jobs:
       - checkout
       - run:
           name: build images
-          command: make build-all
+          command: make build-images
 
 
       - run:

@@ -13,7 +13,7 @@ jobs:
           name: push image to registry
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            make push-image
+            make push-images
 
 workflows:
   version: 2
